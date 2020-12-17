@@ -1,4 +1,5 @@
 import os
+import sys
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -44,6 +45,7 @@ def create_app(test_config=None):
               }
           )
       except:
+          print('Error: ' + str(sys.exc_info()))
           abort(422)
 
   '''
@@ -58,6 +60,30 @@ def create_app(test_config=None):
   ten questions per page and pagination at the bottom of the screen for three pages.
   Clicking on the page numbers should update the questions. 
   '''
+  @app.route('/questions', methods=['GET'])
+  def get_questions():
+      try:
+          page = request.args.get('page', 1, type=int)
+          start = (page - 1) * 10
+          end = start + 10
+          questions = Question.query.all()
+          formatted_questions = [question.format() for question in questions]
+
+          category_list = Category.query.all()
+          categories = []
+          for category in category_list:
+                categories.append(category.type)
+
+          return jsonify({
+              "success": True,
+              "questions": formatted_questions[start: end],
+              "total_questions": len(formatted_questions),
+              "categories": categories
+          })
+      except:
+          print('Error: ' + str(sys.exc_info()))
+          abort(422)
+
   '''
   @TODO: 
   Create an endpoint to DELETE question using a question ID. 
@@ -130,6 +156,13 @@ def create_app(test_config=None):
           "error": 422,
           "message": "Unprocessable Entity"
       }), 422
+  @app.errorhandler(405)
+  def method_not_allowed(error):
+      return jsonify({
+          "success": False,
+          "error": 405,
+          "message": "Method Not Allowed"
+      })
   return app
 
     

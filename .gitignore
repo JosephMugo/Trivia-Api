@@ -3,6 +3,8 @@ __pycache__
 venv
 /frontend/node_modules/
 /backend/env/
+/backend/envTwo/
+/backend/password.txt
 # OS generated files #
 ######################
 .DS_Store

@@ -16,17 +16,35 @@ def create_app(test_config=None):
   '''
   @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
   '''
-
+  CORS(app, resources={r"/questions/*": {"origins": "*"}})
   '''
   @TODO: Use the after_request decorator to set Access-Control-Allow
   '''
-
+  @app.after_request
+  def after_request(response):
+      response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+      response.headers.add('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS')
+      return response
   '''
   @TODO: 
   Create an endpoint to handle GET requests 
   for all available categories.
   '''
-
+  @app.route('/categories', methods=['GET'])
+  def get_categories():
+      try:
+          category_list = Category.query.all()
+          categories = []
+          for category in category_list:
+                categories.append(category.type)
+          return jsonify(
+              {
+                "success": True,
+                "categories": categories,
+              }
+          )
+      except:
+          abort(422)
 
   '''
   @TODO: 
@@ -40,7 +58,6 @@ def create_app(test_config=None):
   ten questions per page and pagination at the bottom of the screen for three pages.
   Clicking on the page numbers should update the questions. 
   '''
-
   '''
   @TODO: 
   Create an endpoint to DELETE question using a question ID. 
@@ -98,7 +115,21 @@ def create_app(test_config=None):
   Create error handlers for all expected errors 
   including 404 and 422. 
   '''
+  @app.errorhandler(404)
+  def not_found(error):
+      return jsonify({
+          "success": False,
+          "error": 404,
+          "message": "Not Found"
+      }), 404
   
+  @app.errorhandler(422)
+  def unprocessable_entity(error):
+      return jsonify({
+          "success": False,
+          "error": 422,
+          "message": "Unprocessable Entity"
+      }), 422
   return app
 
     

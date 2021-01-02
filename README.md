@@ -1,44 +1,35 @@
-# Full Stack API Final Project
+# Trivia API 
+author: Joseph Mugo
+email: joemu18@gmail.com
+github: https://github.com/JosephMugo
 
-## Full Stack Trivia
+Backend code follows: [PEP8 style guidelines](https://www.python.org/dev/peps/pep-0008/)
 
-Udacity is invested in creating bonding experiences for its employees and students. A bunch of team members got the idea to hold trivia on a regular basis and created a  webpage to manage the trivia app and play the game, but their API experience is limited and still needs to be built out. 
+## Getting Started
+> Base Url: http://localhost:5000/ <b><i>(ran locally)<i><b>
 
-That's where you come in! Help them finish the trivia app so they can start holding trivia and seeing who's the most knowledgeable of the bunch. The application must:
-
-1) Display questions - both all questions and by category. Questions should show the question, category and difficulty rating by default and can show/hide the answer. 
-2) Delete questions.
-3) Add questions and require that they include question and answer text.
-4) Search for questions based on a text query string.
-5) Play the quiz game, randomizing either all questions or within a specific category. 
-
-Completing this trivia app will give you the ability to structure plan, implement, and test an API - skills essential for enabling your future applications to communicate with others. 
-
-## Tasks
-
-There are `TODO` comments throughout project. Start by reading the READMEs in:
-
-1. [`./frontend/`](./frontend/README.md)
-2. [`./backend/`](./backend/README.md)
-
-We recommend following the instructions in those files in order. This order will look familiar from our prior work in the course.
-
-## Starting and Submitting the Project
-
-[Fork](https://help.github.com/en/articles/fork-a-repo) the [project repository]() and [Clone](https://help.github.com/en/articles/cloning-a-repository) your forked repository to your machine. Work on the project locally and make sure to push all your changes to the remote repository before submitting the link to your repository in the Classroom. 
-
-## About the Stack
-
-We started the full stack application for you. It is desiged with some key functional areas:
+> API Keys/Authentication: N/A
+### Pre-requisites and Local Development
+<b>Required</b>:
+- python3
+- pip
+- node
+#### backend
+default port: `http://127.0.0.1:5000/`
+##### running backend:
+> set FLASK_APP = flaskr
+> set FLASK_ENV=development  
+> <b>flask run</b>  <i>#starts backend server<i>
+#### frontend
+defulat port: `http://127.0.0.1:3000`
+##### running frontend:
+> npm install 
+> npm start <i>#starts frontend server<I>
 
 ### Backend
 
-The `./backend` directory contains a partially completed Flask and SQLAlchemy server. You will work primarily in app.py to define your endpoints and can reference models.py for DB and SQLAlchemy setup. 
+The `./backend` directory contains a partially completed Flask and SQLAlchemy server. 
 
 ### Frontend
 
 The `./frontend` directory contains a complete React frontend to consume the data from the Flask server. You will need to update the endpoints after you define them in the backend. Those areas are marked with TODO and can be searched for expediency. 
-
-Pay special attention to what data the frontend is expecting from each API response to help guide how you format your API. 
-
-[View the README.md within ./frontend for more details.](./frontend/README.md)

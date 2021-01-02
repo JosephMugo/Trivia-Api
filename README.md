@@ -14,13 +14,13 @@ Backend code follows: [PEP8 style guidelines](https://www.python.org/dev/peps/pe
 - python3
 - pip
 - node
-#### backend
+#### backend [`./backend/`](./backend/README.md)
 default port: `http://127.0.0.1:5000/`
 ##### running backend:
 > set FLASK_APP = flaskr
 > set FLASK_ENV=development  
 > <b>flask run</b>  <i>#starts backend server</i>
-#### frontend
+#### frontend [`./frontend/`](./frontend/README.md)
 defulat port: `http://127.0.0.1:3000`
 ##### running frontend:
 > npm install 

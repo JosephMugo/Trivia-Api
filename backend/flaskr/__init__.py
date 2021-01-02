@@ -3,11 +3,21 @@ import sys
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-import random
+import random 
 
 from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
+
+def paginate_questions(request, selection):
+    page = request.args.get('page', 1, type=int)
+    start = (page - 1) * QUESTIONS_PER_PAGE
+    end = start + QUESTIONS_PER_PAGE
+
+    questions = [question.format() for question in selection]
+    current_questions = questions[start:end]
+
+    return current_questions
 
 def create_app(test_config=None):
   # create and configure the app
@@ -63,11 +73,8 @@ def create_app(test_config=None):
   @app.route('/questions', methods=['GET'])
   def get_questions():
       try:
-          page = request.args.get('page', 1, type=int)
-          start = (page - 1) * 10
-          end = start + 10
           questions = Question.query.all()
-          formatted_questions = [question.format() for question in questions]
+          formatted_questions = paginate_questions(request, questions)
 
           category_list = Category.query.all()
           categories = []
@@ -76,7 +83,7 @@ def create_app(test_config=None):
 
           return jsonify({
               "success": True,
-              "questions": formatted_questions[start: end],
+              "questions": formatted_questions,
               "total_questions": len(formatted_questions),
               "categories": categories
           })
@@ -91,7 +98,26 @@ def create_app(test_config=None):
   TEST: When you click the trash icon next to a question, the question will be removed.
   This removal will persist in the database and when you refresh the page. 
   '''
+  @app.route('/questions/<int:question_id>', methods=['DELETE'])
+  def delete_question(question_id):
+      try:
+          question = Question.query.filter_by(id=question_id).one_or_none()
 
+          if question is None:
+              abort(404)
+          
+          question.delete()
+          questions_after_delete = Question.query.order_by(Question.id).all()
+          questions = paginate_questions(request, questions_after_delete)
+
+          return jsonify({
+              "success": True,
+              "deleted": question_id,
+              "questions": questions,
+              'total_questions': len(questions_after_delete)
+          })
+      except:
+        abort(422)
   '''
   @TODO: 
   Create an endpoint to POST a new question, 
@@ -102,7 +128,42 @@ def create_app(test_config=None):
   the form will clear and the question will appear at the end of the last page
   of the questions list in the "List" tab.  
   '''
+  @app.route('/questions', methods=['POST'])
+  def post_question():
+      body = request.get_json()
+      question = body.get("question", None)
+      answer = body.get("answer", None)
+      difficulty = body.get("difficulty", None)
+      category = body.get("category", None)
+      search_term = body.get("searchTerm", None)
+      try:
+          if (search_term != None):
+              questions = Question.query.all()
+              # Search
+              search_result = list(filter(lambda x: search_term in x.question, Question.query.all()))
+              
+              return jsonify({
+                  "success": True,
+                  "questions": paginate_questions(request, search_result),
+                  "total_questions": len(search_result)
+              })
+          else:
+              # Add new question
+              question = Question(question=question, answer=answer, difficulty=difficulty, category=category)
+              question.insert()
 
+              questions = Question.query.all()
+              formatted_questions = [question.format() for question in questions]
+
+              return jsonify({
+                  "success": True,
+                  "question_created": question.id,
+                  "questions": formatted_questions,
+                  "total_questions": len(formatted_questions)
+              })
+      except:
+          print(sys.exc_info())
+          abort(422)
   '''
   @TODO: 
   Create a POST endpoint to get questions based on a search term. 
@@ -113,7 +174,7 @@ def create_app(test_config=None):
   only question that include that string within their question. 
   Try using the word "title" to start. 
   '''
-
+  # TODO Implemented in the /question POST method endpoint above
   '''
   @TODO: 
   Create a GET endpoint to get questions based on category. 
@@ -122,8 +183,15 @@ def create_app(test_config=None):
   categories in the left column will cause only questions of that 
   category to be shown. 
   '''
-
-
+  @app.route('/categories/<int:category_id>/questions', methods=['GET'])
+  def get_categorie_questions(category_id):
+      try:
+          questions = Question.query.filter_by(category=category_id).all()
+          formatted_questions = paginate_questions(request, questions)
+          return jsonify({"questions": formatted_questions})
+      except:
+          print(sys.exc_info())
+          abort(422)
   '''
   @TODO: 
   Create a POST endpoint to get questions to play the quiz. 
@@ -135,7 +203,87 @@ def create_app(test_config=None):
   one question at a time is displayed, the user is allowed to answer
   and shown whether they were correct or not. 
   '''
+  @app.route('/quizzes', methods=['POST'])
+  def play_quiz():
+      try:
+          body = request.get_json()
+          print(body)
+          previous_questions = body.get('previous_questions', None)
+          quiz_category = body.get('quiz_category', None)
+          if (quiz_category == None):
+              abort(422)
 
+          # return a random question 
+          # when there is a previous questions
+          if (previous_questions != None and len(previous_questions) != 0):
+              print('Category choose: {}'.format(quiz_category))
+              if (quiz_category['type'] == 'click'):
+                  questions = Question.query.all()
+              elif (quiz_category['type'] == 'Science'):
+                  questions = Question.query.filter_by(category=1).all()
+              elif (quiz_category['type'] == 'Art'):
+                  questions = Question.query.filter_by(category=2).all()
+              elif (quiz_category['type'] == 'Geography'):
+                  questions = Question.query.filter_by(category=3).all()
+              elif (quiz_category['type'] == 'History'):
+                  questions = Question.query.filter_by(category=4).all()
+              elif (quiz_category['type'] == 'Entertainment'):
+                  questions = Question.query.filter_by(category=5).all()
+              elif (quiz_category['type'] == 'Sports'):
+                  questions = Question.query.filter_by(category=6).all()
+              
+              for question in questions[:]:
+                  for id in previous_questions:
+                      if question.id == id:
+                          questions.remove(question)
+              print('Questions: {}'.format(questions)) 
+              if len(questions) == 0:
+                  return jsonify({
+                      "question": False
+                  })
+              else:
+                  random_question = questions[random.randint(0, len(questions) - 1)].format()
+                  print('Random Question'.format(random_question))
+              return jsonify({
+                  "question": random_question
+              })
+            # no previous questions
+          else:
+              print('\n\n No Previous \n\n')
+              print(quiz_category)
+              print('Category choose: {}'.format(quiz_category['type']))
+              if (quiz_category['type'] == 'click'):
+                  print('Getting all categories')
+                  questions = Question.query.all()
+              elif (quiz_category['type'] == 'Science'):
+                  print('Getting Science Category')
+                  questions = Question.query.filter_by(category=1).all()
+              elif (quiz_category['type'] == 'Art'):
+                  print('Getting Art Category')
+                  questions = Question.query.filter_by(category=2).all()
+              elif (quiz_category['type'] == 'Geography'):
+                  print('Getting Geography Category')
+                  questions = Question.query.filter_by(category=3).all()
+              elif (quiz_category['type'] == 'History'):
+                  print('Getting History Category')
+                  questions = Question.query.filter_by(category=4).all()
+              elif (quiz_category['type'] == 'Entertainment'):
+                  print('Getting Entertainment Category')
+                  questions = Question.query.filter_by(category=5).all()
+              elif (quiz_category['type'] == 'Sports'):
+                  print('Getting Sports Category')
+                  questions = Question.query.filter_by(category=6).all()
+              if len(questions) == 0:
+                  return jsonify({
+                      "question": False
+                  })
+              random_question = questions[random.randint(0, len(questions) - 1)].format()
+              return jsonify({
+                  "question": random_question
+              })
+      except: 
+          print(sys.exc_info())
+          abort(422)
   '''
   @TODO: 
   Create error handlers for all expected errors 

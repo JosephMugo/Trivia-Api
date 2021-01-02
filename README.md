@@ -1,7 +1,4 @@
 # Trivia API 
-author: Joseph Mugo
-email: joemu18@gmail.com
-github: https://github.com/JosephMugo
 
 Backend code follows: [PEP8 style guidelines](https://www.python.org/dev/peps/pep-0008/)
 
@@ -54,3 +51,8 @@ response: `{
 | POST |/questions|search for questions based on <i>searchTerm</i> in body| <i>searchTerm</i> |`curl -d "{\"searchTerm\": \"what\"}" -H "Content-Type: application/json" http://127.0.0.1:5000/questions`|<i>searchTerm: planet<i> `"questions": [{"answer": "Earth", "category": 1, "difficulty": 1, "id": 1, "question": "What planet do we live on?"}], "success": true, "total_questions": 1`|
 | GET | /categories/<i>category_id</i>/questions |  retrieves questions based on category <<i>category_id</i>> | <i>category_id</i> |`curl http://127.0.0.1:5000/categories/1/questions`|`{questions": [{"answer": "Apple", "category": 1, "difficulty": 1, "id": 3, "question": "What fruit starts with an A?"},{"answer": "Earth", "category": 1, "difficulty": 1, "id": 1, "question": "What planet do we live on?"}]}`
 | POST | /quizzes | retrieve random question based on <i>quiz_category['type']</i> and excludes questions based on <i>previous_questions</i> containing question ids| <i>previous_question(list of integers), quiz_category(object with property type(String) and id(int))</i> |`curl -d "{\"previous_question\": [], \"quiz_category\": {\"type\": \"History\", \"id\": 3}}" -H "Content-Type: application/json" http://127.0.0.1:5000/quizzes`|`{"question": {"answer": "Muhammad Ali", "category": 4, "difficulty": 1, "id": 9, "question": "What boxer's original name is Cassius Clay?"}}` <i><b>or when no questions</b></i>: `{ "question": false }`
+  
+### Deployment N/A
+
+### Authors
+Joseph Mugo

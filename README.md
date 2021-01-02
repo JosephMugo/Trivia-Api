@@ -6,7 +6,7 @@ github: https://github.com/JosephMugo
 Backend code follows: [PEP8 style guidelines](https://www.python.org/dev/peps/pep-0008/)
 
 ## Getting Started
-> Base Url: http://localhost:5000/ <b><i>(ran locally)<i><b>
+> Base Url: http://localhost:5000/ <b><i>(ran locally)</i></b>
 
 > API Keys/Authentication: N/A
 ### Pre-requisites and Local Development
@@ -19,12 +19,12 @@ default port: `http://127.0.0.1:5000/`
 ##### running backend:
 > set FLASK_APP = flaskr
 > set FLASK_ENV=development  
-> <b>flask run</b>  <i>#starts backend server<i>
+> <b>flask run</b>  <i>#starts backend server</i>
 #### frontend
 defulat port: `http://127.0.0.1:3000`
 ##### running frontend:
 > npm install 
-> npm start <i>#starts frontend server<I>
+> npm start <i>#starts frontend server<i/>
 
 ### Backend
 

@@ -4,6 +4,7 @@ from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random 
+from werkzeug.exceptions import HTTPException, NotFound
 
 from models import setup_db, Question, Category
 
@@ -116,6 +117,8 @@ def create_app(test_config=None):
               "questions": questions,
               'total_questions': len(questions_after_delete)
           })
+      except NotFound:
+          abort(404)
       except:
         abort(422)
   '''
@@ -131,6 +134,8 @@ def create_app(test_config=None):
   @app.route('/questions', methods=['POST'])
   def post_question():
       body = request.get_json()
+      if body == None:
+          abort(422)
       question = body.get("question", None)
       answer = body.get("answer", None)
       difficulty = body.get("difficulty", None)
@@ -141,7 +146,6 @@ def create_app(test_config=None):
               questions = Question.query.all()
               # Search
               search_result = list(filter(lambda x: search_term in x.question, Question.query.all()))
-              
               return jsonify({
                   "success": True,
                   "questions": paginate_questions(request, search_result),
@@ -162,7 +166,6 @@ def create_app(test_config=None):
                   "total_questions": len(formatted_questions)
               })
       except:
-          print(sys.exc_info())
           abort(422)
   '''
   @TODO: 
@@ -174,7 +177,7 @@ def create_app(test_config=None):
   only question that include that string within their question. 
   Try using the word "title" to start. 
   '''
-  # TODO Implemented in the /question POST method endpoint above
+  # TODO Implemented in the /question POST method above
   '''
   @TODO: 
   Create a GET endpoint to get questions based on category. 
@@ -186,11 +189,22 @@ def create_app(test_config=None):
   @app.route('/categories/<int:category_id>/questions', methods=['GET'])
   def get_categorie_questions(category_id):
       try:
+          categories = Category.query.all()
+          category_list = []
+          for category in categories:
+              category_list.append(category.id)
+          if category_id not in category_list:
+              abort(404)
+          
           questions = Question.query.filter_by(category=category_id).all()
           formatted_questions = paginate_questions(request, questions)
-          return jsonify({"questions": formatted_questions})
+          return jsonify({
+              "success": True,
+              "questions": formatted_questions
+          })
+      except NotFound:
+          abort(404)
       except:
-          print(sys.exc_info())
           abort(422)
   '''
   @TODO: 
@@ -207,7 +221,6 @@ def create_app(test_config=None):
   def play_quiz():
       try:
           body = request.get_json()
-          print(body)
           previous_questions = body.get('previous_questions', None)
           quiz_category = body.get('quiz_category', None)
           if (quiz_category == None):
@@ -236,53 +249,52 @@ def create_app(test_config=None):
                   for id in previous_questions:
                       if question.id == id:
                           questions.remove(question)
-              print('Questions: {}'.format(questions)) 
               if len(questions) == 0:
                   return jsonify({
+                      "success": True,
                       "question": False
                   })
               else:
                   random_question = questions[random.randint(0, len(questions) - 1)].format()
                   print('Random Question'.format(random_question))
               return jsonify({
+                  "success": True,
                   "question": random_question
               })
             # no previous questions
           else:
-              print('\n\n No Previous \n\n')
-              print(quiz_category)
-              print('Category choose: {}'.format(quiz_category['type']))
               if (quiz_category['type'] == 'click'):
-                  print('Getting all categories')
+                  # gets All Categories
                   questions = Question.query.all()
               elif (quiz_category['type'] == 'Science'):
-                  print('Getting Science Category')
+                  # gets Science Category
                   questions = Question.query.filter_by(category=1).all()
               elif (quiz_category['type'] == 'Art'):
-                  print('Getting Art Category')
+                  # gets Art Category
                   questions = Question.query.filter_by(category=2).all()
               elif (quiz_category['type'] == 'Geography'):
-                  print('Getting Geography Category')
+                  # gets Geography Category
                   questions = Question.query.filter_by(category=3).all()
               elif (quiz_category['type'] == 'History'):
-                  print('Getting History Category')
+                  # gets History Category
                   questions = Question.query.filter_by(category=4).all()
               elif (quiz_category['type'] == 'Entertainment'):
-                  print('Getting Entertainment Category')
+                  # gets Entertainment Category
                   questions = Question.query.filter_by(category=5).all()
               elif (quiz_category['type'] == 'Sports'):
-                  print('Getting Sports Category')
+                  # gets Sports Category
                   questions = Question.query.filter_by(category=6).all()
               if len(questions) == 0:
                   return jsonify({
+                      "success": True,
                       "question": False
                   })
               random_question = questions[random.randint(0, len(questions) - 1)].format()
               return jsonify({
+                  "success": True,
                   "question": random_question
               })
       except: 
-          print(sys.exc_info())
           abort(422)
   '''
   @TODO: 

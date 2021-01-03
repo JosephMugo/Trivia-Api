@@ -27,44 +27,44 @@ class TriviaTestCase(unittest.TestCase):
             self.db.create_all()
             # ----> Create records <----
             # categories
-            self.science = Category('Science')
-            self.db.session.add(self.science)
-            self.art = Category('Art')
-            self.db.session.add(self.art)
-            self.geography = Category('Geography')
-            self.db.session.add(self.geography)
-            self.history = Category('History')
-            self.db.session.add(self.history)
-            self.entertainment = Category('Entertainment')
-            self.db.session.add(self.entertainment)
-            self.sports = Category('Sports')
-            self.db.session.add(self.sports)
-            self.db.session.commit()
+            # self.science = Category('Science')
+            # self.db.session.add(self.science)
+            # self.art = Category('Art')
+            # self.db.session.add(self.art)
+            # self.geography = Category('Geography')
+            # self.db.session.add(self.geography)
+            # self.history = Category('History')
+            # self.db.session.add(self.history)
+            # self.entertainment = Category('Entertainment')
+            # self.db.session.add(self.entertainment)
+            # self.sports = Category('Sports')
+            # self.db.session.add(self.sports)
+            # self.db.session.commit()
             # questions
-            self.question_one = Question('What question is this?', 'test question', 1, 1)
-            self.question_one.insert()
-            self.question_two = Question('What type of question is this?', 'second test question', 1, 1)
-            self.question_two.insert()
+            # self.question_one = Question('What question is this?', 'test question', 1, 1)
+            # self.question_one.insert()
+            # self.question_two = Question('What type of question is this?', 'second test question', 1, 1)
+            # self.question_two.insert()
     
     def tearDown(self):
         """Executed after each test"""
         # binds the app to the current context
-        with self.app.app_context():
+        # with self.app.app_context():
             # Remove records
             # categories
-            self.db.session.delete(self.science)
-            self.db.session.delete(self.art)
-            self.db.session.delete(self.geography)
-            self.db.session.delete(self.history)
-            self.db.session.delete(self.entertainment)
-            self.db.session.delete(self.sports)
+            # self.db.session.delete(self.science)
+            # self.db.session.delete(self.art)
+            # self.db.session.delete(self.geography)
+            # self.db.session.delete(self.history)
+            # self.db.session.delete(self.entertainment)
+            # self.db.session.delete(self.sports)
             
             # questions
-            self.question_one.delete()
-            self.question_two.delete()
+            # self.question_one.delete()
+            # self.question_two.delete()
             
             #commit changes
-            self.db.session.commit()
+            # self.db.session.commit()
     """
     TODO
     Write at least one test for each test for successful operation and for expected errors.
@@ -93,79 +93,132 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Not Found')
 
-    # # GET Questions Test
-    # def test_get_questions(self):
-    #     res = self.client.get('/questions')
-    #     data = json.loads(res.data)
-    #     self.assertEqual(res.status_code, 200)
-    #     self.assertEqual(data['success'], True)
-    #     self.assertTrue(len(data['questions']))
-    #     self.assertTrue(data['total_questions'])
-    #     self.assertTrue(len(data['categories']))
+    # GET Questions Test
+    def test_get_questions(self):
+        res = self.client.get('/questions')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(len(data['questions']))
+        self.assertTrue(data['total_questions'])
+        self.assertTrue(len(data['categories']))
 
-    # def test_404_get_questions(self):
-    #     res = self.client.get('/questions/')
-    #     data = json.loads(res.data)
+    def test_404_get_questions(self):
+        res = self.client.get('/questions/')
+        data = json.loads(res.data)
 
-    #     self.assertEqual(res.status_code, 404)
-    #     self.assertEqual(data['success'], False)
-    #     self.assertEqual(data['message'], 'Not Found')
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Not Found')
 
     # Delete Question
-    # def test_delete_question(self):
-    #     id = Question.query.first().id
+    def test_delete_question(self):
+        id = Question.query.first().id
 
-    #     res = self.client.delete('/questions/' + str(id))
-    #     data = json.loads(res.data)
-    #     question = Question.query.filter_by(id=5).first()
+        res = self.client.delete('/questions/' + str(id))
+        data = json.loads(res.data)
+        question = Question.query.filter_by(id=5).first()
         
-    #     self.assertEqual(res.status_code, 200)
-    #     self.assertEqual(data['success'], True)
-    #     self.assertEqual(data['deleted'], id)
-    #     self.assertTrue(len(data['questions']))
-    #     self.assertTrue(data['total_questions'])
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['deleted'], id)
+        self.assertTrue(len(data['questions']))
+        self.assertTrue(data['total_questions'])
     
-    # def test_422_delete_question(self):
-    #     res = self.client.delete('/questions/1000')
-    #     data = json.loads(res.data)
-    #     question = Question.query.filter_by(id=1000).first()
+    def test_404_delete_question(self):
+        res = self.client.delete('/questions/1000')
+        data = json.loads(res.data)
+        question = Question.query.filter_by(id=1000).first()
 
-    #     self.assertEqual(data['success'], False)
-    #     self.assertEqual(data['message'], "Unprocessable Entity")
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], "Not Found")
 
-    # Post Question
-    # def test_post_question(self):
-    #     new_question = {
-    #         "question": "What is the test question",
-    #         "answer": "This is the test question",
-    #         "difficulty": 1,
-    #         "category": 1
-    #     }
+    # Add Question
+    def test_post_question(self):
+        new_question = {
+            "question": "What is the test question",
+            "answer": "This is the test question",
+            "difficulty": 1,
+            "category": 1
+        }
 
-    #     res = self.client.post('/questions', json=new_question)
-    #     data = json.loads(res.data)
+        res = self.client.post('/questions', json=new_question)
+        data = json.loads(res.data)
 
-    #     self.assertEqual(res.status_code, 200)
-    #     self.assertEqual(data['success'], True)
-    #     self.assertTrue(len(data['questions']))
-    #     self.assertTrue(data['total_questions'])
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(len(data['questions']))
+        self.assertTrue(data['total_questions'])
 
-    # def test_422_post_question(self):
-    #     res = self.client.post('/questions')
-    #     data = json.loads(res.data)
+    def test_422_post_question(self):
+        res = self.client.post('/questions')
+        data = json.loads(res.data)
 
-    #     self.assertEqual(data['success'], False)
-    #     self.assertEqual(data['message'], "Unprocessable Entity")
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], "Unprocessable Entity")
+
     # Search Questions
-    # def test_search_questions(self):
-    #     res = self.client.post('/questions', json={'searchTerm': 'test'})
-    #     data = json.loads(res.data)
+    def test_search_questions(self):
+        search_term = {
+            "searchTerm": "title"
+        }
+        res = self.client.post('/questions', json=search_term)
+        data = json.loads(res.data)
 
-    #     self.assertEqual(res.status_code, 200)
-    #     self.assertEqual(data['success'], True)
-    #     self.assertTrue(data['questions'])
-    #     self.assertTrue(data['total_questions'])
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue((len(data['questions']) >= 0))
+        self.assertTrue((data['total_questions'] >= 0))
+
+    def test_422_search_question(self):
+        res = self.client.post('/questions')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], "Unprocessable Entity")
+        
     # Category Questions
+    def test_get_categories_question(self):
+        res = self.client.get('/categories/1/questions')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue((len(data['questions']) >= 0))
+    
+    def test_404_get_categories_question(self):
+        res = self.client.get('/categories/10000/questions')
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], "Not Found")
+    
+    # Quiz
+    def test_post_quiz(self):
+        info = {
+            "previous_question": [],
+            "quiz_category": {
+                "type": "History",
+                "id": 3
+            }
+        }
+        res = self.client.post('/quizzes', json=info)
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(len(data['question']) >= 0)
+
+    def test_422_post_quiz(self):
+        res = self.client.post('/quizzes')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], "Unprocessable Entity")
 
 # Make the tests conveniently executable
 if __name__ == "__main__":

@@ -25,51 +25,14 @@ class TriviaTestCase(unittest.TestCase):
             self.db.init_app(self.app)
             # create all tables
             self.db.create_all()
-            # ----> Create records <----
-            # categories
-            # self.science = Category('Science')
-            # self.db.session.add(self.science)
-            # self.art = Category('Art')
-            # self.db.session.add(self.art)
-            # self.geography = Category('Geography')
-            # self.db.session.add(self.geography)
-            # self.history = Category('History')
-            # self.db.session.add(self.history)
-            # self.entertainment = Category('Entertainment')
-            # self.db.session.add(self.entertainment)
-            # self.sports = Category('Sports')
-            # self.db.session.add(self.sports)
-            # self.db.session.commit()
-            # questions
-            # self.question_one = Question('What question is this?', 'test question', 1, 1)
-            # self.question_one.insert()
-            # self.question_two = Question('What type of question is this?', 'second test question', 1, 1)
-            # self.question_two.insert()
     
     def tearDown(self):
         """Executed after each test"""
-        # binds the app to the current context
-        # with self.app.app_context():
-            # Remove records
-            # categories
-            # self.db.session.delete(self.science)
-            # self.db.session.delete(self.art)
-            # self.db.session.delete(self.geography)
-            # self.db.session.delete(self.history)
-            # self.db.session.delete(self.entertainment)
-            # self.db.session.delete(self.sports)
-            
-            # questions
-            # self.question_one.delete()
-            # self.question_two.delete()
-            
-            #commit changes
-            # self.db.session.commit()
+        
     """
     TODO
     Write at least one test for each test for successful operation and for expected errors.
     """
-
     # GET Categories Test
     # Categories table has to be filled for the test to operate correctly
     def test_get_categories(self):

@@ -55,7 +55,7 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 ## Testing
 Before running the test 
 - create a password.txt file in the database directory
-- write the password for the database on the first line
+- write the password for the database on the first line of the password.txt file
 
 To run the tests, run
 ```

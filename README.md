@@ -1,4 +1,6 @@
 # Trivia API 
+##### Api that provides users with the information they need to run a trivia game. This api has the ability to fetch random questions, get questions based on categories, etc.
+##### Read documentation to see other feautures
 
 Backend code follows: [PEP8 style guidelines](https://www.python.org/dev/peps/pep-0008/)
 
